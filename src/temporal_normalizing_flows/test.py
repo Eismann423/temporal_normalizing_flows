@@ -1,2 +1,3 @@
 print("Hello, world")
-print("I love dogs")
+print("I love cats")
+print("Dragons are pretty cool too")
