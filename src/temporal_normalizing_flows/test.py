@@ -4,6 +4,8 @@ import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 #from diffusioncharacterization.ctrw.random_walks import advection_diffusion_random_walk
 from src.temporal_normalizing_flows.neural_flow import neural_flow
