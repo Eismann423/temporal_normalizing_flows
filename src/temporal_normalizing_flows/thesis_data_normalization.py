@@ -4,7 +4,9 @@ import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import os
 sns.set()
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 #from diffusioncharacterization.ctrw.random_walks import advection_diffusion_random_walk
 from src.temporal_normalizing_flows.neural_flow import neural_flow
@@ -23,14 +25,52 @@ torch.manual_seed(0)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
-file = r"C:\Users\Eisma\thesis\nationals_data\calcs\qual\processing\white_proc\raw\csv\9 white LR first.csv"
-xls = pd.read_csv(file)
-# print(xls)
-x_force = xls.loc[:,'X'].values
-print(x_force.size)
-time = np.arange(0, x_force.size - 1, .008)
+path_source = r"C:\Users\Eisma\thesis\nationals_data\calcs\qual\processing\white_proc\raw\csv"
+
+maxLength = 0
+for subdir, dirs, files in os.walk(path_source):
+    for filename in files:
+        xls = pd.read_csv(os.path.join(subdir, filename))
+        if np.array([xls.loc[:, 'X'].values]).shape[1] > maxLength:
+            maxLength = np.array([xls.loc[:, 'X'].values]).shape[1]
+            name = os.path.join(subdir, filename)
+
+force = []
+for subdir, dirs, files in os.walk(path_source):
+    for filename in files:
+        xls = pd.read_csv(os.path.join(subdir, filename))
+        x = np.array([xls.loc[:, 'X'].values])
+        y = np.array([xls.loc[:, 'Y'].values])
+        z = np.array([xls.loc[:, 'Z'].values])
+
+        x.resize(maxLength)
+        y.resize(maxLength)
+        z.resize(maxLength)
+
+        force.append(x.tolist())
+        force.append(y.tolist())
+        force.append(z.tolist())
+
+vforce = np.vstack(force)
+vforce_T = vforce.T
+
+freq = .008
+endTime = len(max(vforce, key=len)) * freq
+time = np.arange(0, endTime, freq)
+print(time.shape)
+print(vforce_T.shape)
+
 
 #%% Time-dependent neural flow
-x_sample = np.linspace(-15, 15, 1000)
+x_sample = np.linspace(-25, 200, 1000)
 t_sample = time
-dataset = prepare_data(x_force, time, x_sample, t_sample)
+dataset = prepare_data(vforce_T, time, x_sample, t_sample)
+
+flow = neural_flow(gaussian)
+flow.train(dataset, 10000)
+
+px, pz, jacob, z = flow.sample(dataset)
+
+plt.contourf(px)
+plt.xlabel('x')
+plt.ylabel('t')

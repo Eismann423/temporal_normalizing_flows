@@ -45,6 +45,7 @@ docs/_rst/*
 docs/_build/*
 cover/*
 MANIFEST
+screenshot/*
 
 # Per-project virtualenvs
 .venv*/

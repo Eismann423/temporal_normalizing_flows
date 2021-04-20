@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 sns.set()
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
@@ -45,7 +46,6 @@ def advection_diffusion_random_walk(walk_params, traj_params, initial_conditions
 walk_params = [99, 500, 0.05]  # timesteps, walkers, stepsize
 traj_params = [2.0, 0.0]       # Diffusion coefficient, velocity
 initial_conditions = np.random.normal(loc=1.5, scale=0.5, size=(1, walk_params[1]))
-
 time, position = advection_diffusion_random_walk(walk_params, traj_params, initial_conditions)
 
 
@@ -76,14 +76,14 @@ plt.show()
 x_sample = np.linspace(-15, 15, 1000)
 t_sample = time
 dataset = prepare_data(position, time, x_sample, t_sample)
-
+print(dataset)
 
 # Now we create a flow and train it:
 
 flow = neural_flow(gaussian)
-flow.train(dataset, 10000)
+flow.train(dataset, 3000) # switch back to 10000 once working
 
-
+print(dataset)
 # We get our results by sampling the dataset:
 
 px, pz, jacob, z = flow.sample(dataset)
