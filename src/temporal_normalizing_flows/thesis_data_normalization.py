@@ -69,6 +69,7 @@ dataset = prepare_data(vforce_T, time, x_sample, t_sample)
 flow = neural_flow(gaussian)
 flow.train(dataset, 10000)
 
+output = network(dataset)
 px, pz, jacob, z = flow.sample(dataset)
 
 plt.contourf(px)

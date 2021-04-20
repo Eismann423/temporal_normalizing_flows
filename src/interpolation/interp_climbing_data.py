@@ -14,10 +14,11 @@ for subdir, dirs, files in os.walk(path_source):
         x = np.array([xls.loc[:, 'X'].values])
         y = np.array([xls.loc[:, 'Y'].values])
         z = np.array([xls.loc[:, 'Z'].values])
-        values = np.concatenate(x, y, z)
+        values = np.concatenate((x, y, z), axis=0)
+        values.T
 
         grid_x, grid_y, grid_z = np.mgrid[0:1:100j, 0:1:200j]
-
+        print(grid_x)
         endTime = len(x)
         time = np.arange(0, endTime, freq)
 

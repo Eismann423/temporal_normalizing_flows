@@ -87,7 +87,7 @@ print(dataset)
 # We get our results by sampling the dataset:
 
 px, pz, jacob, z = flow.sample(dataset)
-
+print(z)
 #%%
 
 plt.contourf(px)
